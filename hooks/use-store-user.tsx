@@ -14,23 +14,21 @@ export function useStoreUserEffect() {
   const storeUser = useMutation(api.users.store);
   // Call the `storeUser` mutation function to store
   // the current user in the `users` table and return the `Id` value.
-  useEffect(() => {
-    // If the user is not logged in don't do anything
-    if (!isAuthenticated) {
-      return;
-    }
-    // Store the user in the database.
-    // Recall that `storeUser` gets the user information via the `auth`
-    // object on the server. You don't need to pass anything manually here.
-    async function createUser() {
-      const id = await storeUser();
-      setUserId(id);
-    }
-    createUser();
-    return () => setUserId(null);
-    // Make sure the effect reruns if the user logs in with
-    // a different identity
-  }, [isAuthenticated, storeUser, user?.id]);
+useEffect(() => {
+  console.log("🟩 useStoreUserEffect running, isAuthenticated:", isAuthenticated);
+
+  if (!isAuthenticated) return;
+
+  async function createUser() {
+    console.log("🟩 Calling storeUser mutation...");
+    const id = await storeUser();
+    console.log("🟩 Mutation returned:", id);
+    setUserId(id);
+  }
+
+  createUser();
+}, [isAuthenticated, storeUser, user?.id]);
+
   // Combine the local state with the state from context
   return {
     isLoading: isLoading || (isAuthenticated && userId === null),
